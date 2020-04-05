@@ -6,7 +6,11 @@
     "start": "nodemon server.js"
   },
   "dependencies": {
-    "express": "4.17.1"
+    "express": "4.17.1",
+    "bcrypt-nodejs": "0.0.3",
+    "cors": "2.8.5",
+    "knex": "0.20.6",
+    "pg": "7.17.0"
   },
   "devDependencies": {
     "nodemon": "2.0.2"

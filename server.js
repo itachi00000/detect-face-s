@@ -1,10 +1,26 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const bcrypt = require('bcrypt-nodejs');
+const cors = require('cors');
+const knex = require('knex');
+
+knex({
+  client: 'pg',
+  connection: {
+    host: '127.0.0.1',
+    user: 'postgres',
+    password: '1234',
+    database: 'smart-brain-db'
+  }
+});
+
+const PORT = 3000;
 
 const app = express();
 
-// middleware
+// middlewares
 app.use(bodyParser.json());
+app.use(cors());
 
 // database
 const database = {
@@ -25,9 +41,17 @@ const database = {
       entries: 0,
       joined: new Date()
     }
+  ],
+  login: [
+    {
+      id: '987',
+      has: '',
+      email: 'john@gmail.com'
+    }
   ]
 };
 
+// request & response ??
 app.get('/', (req, res) => {
   res.send(database.users);
 });
@@ -48,26 +72,44 @@ app.get('/profile/:userId', (req, res) => {
 });
 
 app.post('/signin', (req, res) => {
+  bcrypt.compare(
+    'apple',
+    '$2a$10$5b8ejcXaBbGY0uS6M8yFH.j83pL5fWp7nrofyj/KSk.L9GZPCSLzq',
+    function(err, res) {
+      console.log('first guest', res);
+    }
+  );
+
   if (
     req.body.email === database.users[0].email &&
     req.body.password === database.users[0].password
   ) {
-    res.json(`Welcome back ${req.body.name}`);
+    res.json(database.users[0]);
   } else {
-    res.status(400).json('Error Logging in');
+    res.status(400).json({ msg: 'error' });
   }
 });
 
 app.post('/register', (req, res) => {
   const { email, password, name } = req.body;
+
+  // bcrypt.hash(password, null, null, function(err, hash) {
+  //   console.log(hash);
+  // });
+
+  if (!name || !password || !email) {
+    return res.status(400).json({ msg: 'error' });
+  }
+
   database.users.push({
     id: '125',
-    name,
-    email,
-    password,
+    name: name,
+    email: email,
+    password: password,
     entries: 0,
     joined: new Date()
   });
+
   res.json(database.users[database.users.length - 1]);
 });
 
@@ -83,12 +125,12 @@ app.put('/image', (req, res) => {
   });
 
   if (!found) {
-    res.status(400).json('no such user');
+    res.status(404).json('no such user');
   }
 });
 
-app.listen(3000, () => {
-  console.log('Smart Brain API is running on port 3000');
+app.listen(PORT, () => {
+  console.log('Smart Brain App Server is running on port: ' + PORT);
 });
 
 /*
