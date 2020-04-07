@@ -1,10 +1,8 @@
 {
   "name": "smart-brain-api",
   "version": "1.0.0",
-  "main": "script.js",
-  "scripts": {
-    "start": "nodemon server.js"
-  },
+  "main": "server.js",
+  "scripts": {},
   "dependencies": {
     "express": "4.17.1",
     "bcrypt-nodejs": "0.0.3",
