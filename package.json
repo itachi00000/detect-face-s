@@ -10,7 +10,8 @@
     "bcrypt-nodejs": "0.0.3",
     "cors": "2.8.5",
     "knex": "0.20.6",
-    "pg": "7.17.0"
+    "pg": "7.17.0",
+    "clarifai": "2.9.1"
   },
   "devDependencies": {
     "nodemon": "2.0.2"
