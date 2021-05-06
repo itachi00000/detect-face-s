@@ -16,6 +16,9 @@
   "devDependencies": {
     "nodemon": "2.0.2"
   },
+  "engines": {
+    "node": "12.22.1"
+  },
   "keywords": [],
   "author": "itachi0",
   "license": "MIT",
