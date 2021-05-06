@@ -2,7 +2,9 @@
   "name": "smart-brain-api",
   "version": "1.0.0",
   "main": "server.js",
-  "scripts": {},
+  "scripts": {
+    "start": "node server.js"
+  },
   "dependencies": {
     "express": "4.17.1",
     "bcrypt-nodejs": "0.0.3",
@@ -14,8 +16,11 @@
   "devDependencies": {
     "nodemon": "2.0.2"
   },
+  "engines": {
+    "node": "14.16.1"
+  },
   "keywords": [],
-  "author": "dArk2",
+  "author": "itachi0",
   "license": "MIT",
   "description": ""
 }

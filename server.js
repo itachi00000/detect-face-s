@@ -45,6 +45,11 @@ app.post('/register', (req, res) => {
   register.handleRegister(req, res, db, bcrypt);
 });
 
+// for clarifai api
+app.post('/imageUrl', (req, res) => {
+  image.handleApiCall(req, res);
+});
+
 app.put('/image', (req, res) => {
   image.handleImage(req, res, db);
 });
