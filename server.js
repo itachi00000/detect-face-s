@@ -22,7 +22,7 @@ const db = knex({
 // vars
 const Port = process.env.PORT || 3000;
 // var whitelist = ['http://localhost:3000/']
-var corsOptions = { origin: true }
+// var corsOptions = { origin: true }
 
 
 // express init
@@ -30,7 +30,7 @@ const app = express();
 
 // middlewares
 app.use(bodyParser.json());
-app.use(cors(corsOptions));
+app.use(cors());
 
 app.use(express.static('public'));
 
