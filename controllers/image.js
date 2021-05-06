@@ -1,7 +1,8 @@
 const clarifai = require('clarifai');
 
+// add clarifai key at heroku "config vars"
 const clarifaiApp = new clarifai.App({
-  apiKey: '8ea19eb392504707829b8a54eefc3ce0'
+  apiKey: process.env.CLARIFAI_API_KEY
 });
 
 const handleApiCall = (req, res) => {
