@@ -28,6 +28,8 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
+app.use(express.static('public'));
+
 // request & response ??
 app.get('/', (req, res) => {
   res.send(db.users);
