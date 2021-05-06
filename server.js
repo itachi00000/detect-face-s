@@ -58,7 +58,7 @@ app.put('/image', (req, res) => {
 
 // listen to localhost:3000
 app.listen(Port, () => {
-  console.log('Smart Brain App Server is running at port: ' + Port);
+  console.log(`Smart Brain App Server is running at port: ${Port}`);
 });
 
 /*
