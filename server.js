@@ -19,14 +19,26 @@ const db = knex({
   }
 });
 
+// vars
 const Port = process.env.PORT || 3000;
+var whitelist = ['http://localhost:3000']
+var corsOptions = {
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  }
+}
+
 
 // express init
 const app = express();
 
 // middlewares
 app.use(bodyParser.json());
-app.use(cors());
+app.use(cors(corsOptions));
 
 app.use(express.static('public'));
 
