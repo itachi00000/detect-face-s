@@ -21,10 +21,10 @@ const knexConfig = {
     pool: {
       // afterCreate callback (rawDriverConnection, done)
       afterCreate(connection, done) {
-        connection.query('SET time_zone = "+00:00";', err => {
-          // for both error and connected
-          done(err, connection);
-        });
+        console.log('database connected?');
+        done(null, connection);
+        // for both error and connected
+        done(err, connection);
       },
       min: 0,
       max: 7
@@ -38,9 +38,8 @@ const knexConfig = {
     },
     pool: {
       afterCreate(connection, done) {
-        connection.query('SET time_zone = "+00:00";', err => {
-          done(err, connection);
-        });
+        console.log('database connected?');
+        done(null, connection);
       },
       min: 0,
       max: 7
