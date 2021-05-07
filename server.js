@@ -2,7 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt-nodejs');
 const cors = require('cors');
-const knex = require('knex');
+
+const db = require('./config');
 
 // controllers
 const register = require('./controllers/register');
@@ -10,20 +11,10 @@ const signin = require('./controllers/signin');
 const profile = require('./controllers/profile');
 const image = require('./controllers/image');
 
-// connect server to database (postgres or pg)
-const db = knex({
-  client: 'pg',
-  connection: {
-    connectionString: process.env.DATABASE_URL,
-    ssl: true
-  }
-});
-
 // vars
 const Port = process.env.PORT || 3000;
 // var whitelist = ['http://localhost:3000/']
 // var corsOptions = { origin: true }
-
 
 // express init
 const app = express();
@@ -32,11 +23,20 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-app.use(express.static('public'));
+// app.use(express.static('public'));
 
 // request & response ??
 app.get('/', (req, res) => {
-  res.send(db.users);
+  db.from('users')
+    .select('*')
+    .then(data => {
+      console.log('data', data);
+      return res.json(data);
+    })
+    .catch(error => {
+      console.error(error);
+      return res.status(404).json(error);
+    });
 });
 
 app.get('/profile/:id', (req, res) => {
@@ -61,7 +61,8 @@ app.put('/image', (req, res) => {
 });
 
 // listen to localhost:3000
-app.listen(Port, () => {
+app.listen(Port, err => {
+  if (err) throw err;
   console.log(`Smart Brain App Server is running at port: ${Port}`);
 });
 
