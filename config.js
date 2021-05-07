@@ -17,6 +17,17 @@ const knexConfig = {
       host: process.env.DB_HOST,
       port: process.env.DB_PORT,
       database: process.env.DB_DATABASE
+    },
+    pool: {
+      // afterCreate callback (rawDriverConnection, done)
+      afterCreate(connection, done) {
+        connection.query('SET time_zone = "+00:00";', err => {
+          // for both error and connected
+          done(err, connection);
+        });
+      },
+      min: 0,
+      max: 7
     }
   },
   production: {
@@ -25,7 +36,15 @@ const knexConfig = {
       connectionString: process.env.DATABASE_URL,
       ssl: true
     },
-    pool: { min: 0, max: 7 }
+    pool: {
+      afterCreate(connection, done) {
+        connection.query('SET time_zone = "+00:00";', err => {
+          done(err, connection);
+        });
+      },
+      min: 0,
+      max: 7
+    }
   }
 };
 
@@ -34,4 +53,15 @@ const knexConfig = {
 // check if process.env.NODE_ENV === 'production' else use 'development'
 const knex = require('knex')(knexConfig[process.env.NODE_ENV || 'development']);
 
+//  checking connection
+knex
+  .raw('SELECT VERSION()')
+  .then(() => {
+    console.log('DB connection established');
+  })
+  .catch(err => {
+    console.log(err);
+  });
+
+// then export
 module.exports = knex;

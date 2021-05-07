@@ -2,6 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt-nodejs');
 const cors = require('cors');
+const morgan = require('morgan');
+const helmet = require('helmet');
 
 const db = require('./config');
 
@@ -13,15 +15,15 @@ const image = require('./controllers/image');
 
 // vars
 const Port = process.env.PORT || 3000;
-// var whitelist = ['http://localhost:3000/']
-// var corsOptions = { origin: true }
 
 // express init
 const app = express();
 
 // middlewares
-app.use(bodyParser.json());
 app.use(cors());
+app.use(helmet());
+app.use(morgan('dev'));
+app.use(bodyParser.json());
 
 // app.use(express.static('public'));
 
@@ -30,7 +32,6 @@ app.get('/', (req, res) => {
   db.from('users')
     .select('*')
     .then(data => {
-      console.log('data', data);
       return res.json(data);
     })
     .catch(error => {
@@ -52,12 +53,20 @@ app.post('/register', (req, res) => {
 });
 
 // for clarifai api
-app.post('/imageUrl', (req, res) => {
+app.post('/imageurl', (req, res) => {
   image.handleApiCall(req, res);
 });
 
 app.put('/image', (req, res) => {
   image.handleImage(req, res, db);
+});
+
+//
+app.use('*', (req, res, next) => {
+  const error = new Error(`${req.ip} tried to access ${req.originalUrl}`);
+  console.log(error);
+
+  return res.status(404).json('not existed');
 });
 
 // listen to localhost:3000

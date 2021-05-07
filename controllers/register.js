@@ -1,10 +1,22 @@
 const handleRegister = (req, res, db, bcrypt) => {
   const { email, password, name } = req.body;
 
+  // checking for number
+  db.from('users')
+    .select('*')
+    .then(data => {
+      if (data.length > 5) {
+        return res.status(500).json('full! use, e: guest@gmail.com, p: guest');
+      }
+    })
+    .catch(err => res.status(404).json(err));
+
+  // checking for empty value
   if (!name || !password || !email) {
-    return res.status(400).json('incorrect form submission!');
+    return res.status(400).json('enter name password email');
   }
 
+  // create hash
   const hash = bcrypt.hashSync(password);
 
   // transaction of login and users table

@@ -12,8 +12,10 @@
     "cors": "2.8.5",
     "dotenv": "^8.6.0",
     "express": "4.17.1",
+    "helmet": "^3.23.3",
     "knex": "0.95.4",
     "lodash": "4.17.21",
+    "morgan": "^1.10.0",
     "pg": "7.17.0"
   },
   "devDependencies": {
@@ -25,5 +27,5 @@
   "keywords": [],
   "author": "itachi0",
   "license": "MIT",
-  "description": ""
+  "description": "face detection server"
 }
