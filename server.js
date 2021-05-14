@@ -12,8 +12,11 @@ const register = require('./controllers/register');
 const signin = require('./controllers/signin');
 const profile = require('./controllers/profile');
 const image = require('./controllers/image');
+// auth
+const auth = require('./auth');
 
 // vars
+// heroku has it own PORT
 const Port = process.env.PORT || 3000;
 
 // express init
@@ -25,39 +28,44 @@ app.use(helmet());
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 
-// app.use(express.static('public'));
+app.use(express.static('public'));
 
 // request & response ??
-app.get('/', (req, res) => {
-  db.from('users')
-    .select('*')
-    .then(data => {
-      return res.json(data);
-    })
-    .catch(error => {
-      console.error(error);
-      return res.status(404).json(error);
-    });
-});
-
-app.get('/profile/:id', (req, res) => {
-  profile.handleProfile(req, res, db);
-});
-
-app.post('/signin', (req, res) => {
-  signin.handleSignin(req, res, db, bcrypt);
-});
+// app.get('/', (req, res) => {
+//   db.from('users')
+//     .select('*')
+//     .then((data) => {
+//       return res.json(data);
+//     })
+//     .catch((error) => {
+//       console.error(error);
+//       return res.status(404).json(error);
+//     });
+// });
 
 app.post('/register', (req, res) => {
   register.handleRegister(req, res, db, bcrypt);
 });
 
-// for clarifai api
-app.post('/imageurl', (req, res) => {
+// auth.requireAuth has (req, res, next)
+app.post('/signin', (req, res) => {
+  signin.signinAuthentication(req, res, db, bcrypt);
+});
+
+app.get('/profile/:id', auth.requireAuth, (req, res) => {
+  profile.handleProfile(req, res, db);
+});
+
+app.post('/profile/:id', auth.requireAuth, (req, res) => {
+  profile.handleProfileUpdate(req, res, db);
+});
+
+// /imageUrl - for clarifai api
+app.post('/imageurl', auth.requireAuth, (req, res) => {
   image.handleApiCall(req, res);
 });
 
-app.put('/image', (req, res) => {
+app.put('/image', auth.requireAuth, (req, res) => {
   image.handleImage(req, res, db);
 });
 
@@ -70,9 +78,9 @@ app.use('*', (req, res, next) => {
 });
 
 // listen to localhost:3000
-app.listen(Port, err => {
+app.listen(Port, (err) => {
   if (err) throw err;
-  console.log(`Smart Brain App Server is running at port: ${Port}`);
+  console.log(`<< Smart-Brain-App ExpServer is running at port: ${Port}`);
 });
 
 /*
