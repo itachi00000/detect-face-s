@@ -5,7 +5,7 @@ const handleRegister = (req, res, db, bcrypt) => {
   db.from('users')
     .select('*')
     .then(data => {
-      if (data.length > 5) {
+      if (data.length > 10) {
         return res.status(500).json('full! use, e: guest@gmail.com, p: guest');
       }
     })

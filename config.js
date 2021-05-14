@@ -1,6 +1,6 @@
 const dotenv = require('dotenv'); // always on top
 
-dotenv.config({ path: './.env.development.local' });
+dotenv.config({ path: './.env.dev.local' });
 
 // if using connectionString
 // const isProduction = process.env.NODE_ENV === 'production';
@@ -24,7 +24,7 @@ const knexConfig = {
         console.log('database connected?');
         done(null, connection);
         // for both error and connected
-        done(err, connection);
+        done(null, connection);
       },
       min: 0,
       max: 7
@@ -53,14 +53,14 @@ const knexConfig = {
 const knex = require('knex')(knexConfig[process.env.NODE_ENV || 'development']);
 
 //  checking connection
-knex
-  .raw('SELECT VERSION()')
-  .then(() => {
-    console.log('DB connection established');
-  })
-  .catch(err => {
-    console.log(err);
-  });
+// knex
+//   .raw('SELECT VERSION()')
+//   .then(() => {
+//     console.log('DB connection established');
+//   })
+//   .catch((err) => {
+//     console.log(err);
+//   });
 
 // then export
 module.exports = knex;
