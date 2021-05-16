@@ -1,27 +1,17 @@
 //
 const handleProfile = (req, res, db) => {
-  const { id } = req.params;
+  const user = req.profile;
 
-  db.select('*')
-    .from('users')
-    .where({ id })
-    .then((user) => {
-      if (user.length) {
-        return res.json(user[0]);
-      } else {
-        return res.status(400).json('Not found');
-      }
-    })
-    .catch(() => res.status(400).json('Error getting user'));
+  return res.json(user);
 };
 
 //
 const handleProfileUpdate = (req, res, db) => {
-  const { id } = req.params;
+  const { id } = req.profile;
   const { username, pet, age, name } = req.body.formInput;
 
-  // testing to tight entry
-  if (!username || !pet || !age || !id) {
+  // testing to entry
+  if (!name) {
     return res.status(400).json('enter username, pet, age');
   }
 
@@ -33,15 +23,33 @@ const handleProfileUpdate = (req, res, db) => {
     // .returning('users')
     .then((resp) => {
       if (!resp) {
-        return res.status(404).json('fail');
+        return res.status(404).json('fail to update');
       }
 
-      res.json('success');
+      res.json('updated success');
     })
     .catch(console.error);
 };
 
+const byId = async (req, res, next, id, db) => {
+  return db
+    .select('*')
+    .from('users')
+    .where({ id })
+    .then((users) => {
+      if (!users.length) {
+        return res.status(400).json('user Not found');
+      }
+      // mount
+      req.profile = users[0];
+
+      return next();
+    })
+    .catch(() => res.status(400).json('Error getting user'));
+};
+
 module.exports = {
   handleProfile,
-  handleProfileUpdate
+  handleProfileUpdate,
+  byId
 };
