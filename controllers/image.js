@@ -16,7 +16,12 @@ const handleApiCall = (req, res) => {
 };
 
 const handleImage = (req, res, db) => {
-  const { id } = req.body;
+  const { id, email } = req.body;
+
+if(req.auth.email !== email){
+  throw Error('not authorized')
+}
+
   db('users')
     .where('id', '=', id)
     .increment('entries', 1)

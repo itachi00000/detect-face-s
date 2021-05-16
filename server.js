@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt-nodejs');
 const cors = require('cors');
 const morgan = require('morgan');
 const helmet = require('helmet');
+const dotenv = require('dotenv');
 
 const db = require('./config');
 
@@ -13,7 +14,12 @@ const signin = require('./controllers/signin');
 const profile = require('./controllers/profile');
 const image = require('./controllers/image');
 // auth
-const auth = require('./auth');
+const { isLoggedIn, isAuth } = require('./auth');
+
+// env
+dotenv.config({
+  path: './.env.dev.local'
+});
 
 // vars
 // heroku has it own PORT
@@ -30,17 +36,9 @@ app.use(bodyParser.json());
 
 app.use(express.static('public'));
 
-// request & response ??
-// app.get('/', (req, res) => {
-//   db.from('users')
-//     .select('*')
-//     .then((data) => {
-//       return res.json(data);
-//     })
-//     .catch((error) => {
-//       console.error(error);
-//       return res.status(404).json(error);
-//     });
+// app.get('/hi', (req, res) => {
+//   console.log('sessionId', req.sessionID);
+//   return res.json('hi world ' + req.sessionID);
 // });
 
 app.post('/register', (req, res) => {
@@ -49,24 +47,30 @@ app.post('/register', (req, res) => {
 
 // auth.requireAuth has (req, res, next)
 app.post('/signin', (req, res) => {
-  signin.signinAuthentication(req, res, db, bcrypt);
+  return signin.handleSignin(req, res, db, bcrypt);
 });
 
-app.get('/profile/:id', auth.requireAuth, (req, res) => {
-  profile.handleProfile(req, res, db);
+app.get('/profile/:id', isLoggedIn, isAuth, (req, res) => {
+  profile.handleProfile(req, res);
 });
 
-app.post('/profile/:id', auth.requireAuth, (req, res) => {
+// patch or put
+app.patch('/profile/:id', isLoggedIn, isAuth, (req, res) => {
   profile.handleProfileUpdate(req, res, db);
 });
 
 // /imageUrl - for clarifai api
-app.post('/imageurl', auth.requireAuth, (req, res) => {
+app.post('/imageurl', isLoggedIn, (req, res) => {
   image.handleApiCall(req, res);
 });
 
-app.put('/image', auth.requireAuth, (req, res) => {
+app.put('/image', isLoggedIn, (req, res) => {
   image.handleImage(req, res, db);
+});
+
+// params
+app.param('id', (req, res, next, id) => {
+  profile.byId(req, res, next, id, db);
 });
 
 //

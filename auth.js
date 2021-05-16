@@ -1,37 +1,48 @@
-const { createClient } = require('redis');
+const expressJwt = require('express-jwt');
+// const redis = require('redis');
 
-// default- host: 127.0.0.1, port: 6379
-const redisClient = createClient();
+// const redisClient = redis.createClient();
 
-redisClient.on('connect', () => {
-  console.log('<< connected to redis-DB');
+// redisClient.on('connect', () => {
+//   console.log('<< connected to REDIS!');
+// });
+
+// redisClient.on('error', (error) => {
+//   if (error) {
+//     console.error('error', error);
+//     throw error;
+//   }
+// });
+
+// not using redis
+// because no free remote-hosting for redis
+
+// as middleware
+// replace the requireAuth(w/ redis)
+// access token from header.authorization, then jwt.verify it, then append req.auth
+const isLoggedIn = expressJwt({
+  secret: process.env.JWT_SECRET,
+  algorithms: ['HS256'],
+  requestProperty: 'auth' // this mw will append auth'. req.auth
 });
 
-// error
-redisClient.on('error', (error) => {
-  if (error) {
-    // console.error('error-redis', error);
-    throw error;
-  }
-});
+// put only on router that has /:id
+const isAuth = async (req, res, next) => {
+  try {
 
-const requireAuth = (req, res, next) => {
-  // by standard, authorization format is 'Bearer <token>'
-  const { authorization } = req.headers;
+    const authorized =
+      req.profile.email &&
+      req.auth.email &&
+      req.profile.email === req.auth.email;
 
-  if (!authorization) {
-    console.log('require-auth-failed');
-    return res.status(403).json('Unauthorized');
-  }
-
-  // replace/removing 'Bearer '
-  return redisClient.get(authorization.replace('Bearer ', ''), (err, reply) => {
-    if (err || !reply) {
-      return res.status(401).json('Unauthorized');
+    if (!authorized) {
+      return res.status(403).json('Unauthorized!');
     }
-    console.log('require-auth-passed');
+
     return next();
-  });
+  } catch (error) {
+    return res.status(404).json(error);
+  }
 };
 
-module.exports = { requireAuth, redisClient };
+module.exports = { isLoggedIn, isAuth };
