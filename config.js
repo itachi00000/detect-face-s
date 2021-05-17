@@ -19,13 +19,6 @@ const knexConfig = {
       database: process.env.DB_DATABASE
     },
     pool: {
-      // afterCreate callback (rawDriverConnection, done)
-      afterCreate(connection, done) {
-        console.log('database connected?');
-        done(null, connection);
-        // for both error and connected
-        done(null, connection);
-      },
       min: 0,
       max: 7
     }
@@ -37,10 +30,6 @@ const knexConfig = {
       ssl: true
     },
     pool: {
-      afterCreate(connection, done) {
-        console.log('database connected?');
-        done(null, connection);
-      },
       min: 0,
       max: 7
     }
@@ -53,14 +42,14 @@ const knexConfig = {
 const knex = require('knex')(knexConfig[process.env.NODE_ENV || 'development']);
 
 //  checking connection
-// knex
-//   .raw('SELECT VERSION()')
-//   .then(() => {
-//     console.log('DB connection established');
-//   })
-//   .catch((err) => {
-//     console.log(err);
-//   });
+knex
+  .raw('SELECT VERSION()')
+  .then(() => {
+    console.log('Posgres-DB is connected');
+  })
+  .catch((err) => {
+    console.log(err);
+  });
 
 // then export
 module.exports = knex;

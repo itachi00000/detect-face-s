@@ -4,12 +4,12 @@ const handleRegister = (req, res, db, bcrypt) => {
   // checking for number
   db.from('users')
     .select('*')
-    .then(data => {
+    .then((data) => {
       if (data.length > 10) {
         return res.status(500).json('full! use, e: guest@gmail.com, p: guest');
       }
     })
-    .catch(err => res.status(404).json(err));
+    .catch((err) => res.status(404).json(err));
 
   // checking for empty value
   if (!name || !password || !email) {
@@ -20,7 +20,7 @@ const handleRegister = (req, res, db, bcrypt) => {
   const hash = bcrypt.hashSync(password);
 
   // transaction of login and users table
-  db.transaction(trx => {
+  db.transaction((trx) => {
     trx
       .insert({
         hash: hash,
@@ -28,7 +28,7 @@ const handleRegister = (req, res, db, bcrypt) => {
       })
       .into('login')
       .returning('email')
-      .then(loginEmail => {
+      .then((loginEmail) => {
         return trx('users')
           .returning('*')
           .insert({
@@ -36,7 +36,7 @@ const handleRegister = (req, res, db, bcrypt) => {
             name: name,
             joined: new Date()
           })
-          .then(user => {
+          .then((user) => {
             res.json(user[0]);
           });
       })
@@ -46,5 +46,5 @@ const handleRegister = (req, res, db, bcrypt) => {
 };
 
 module.exports = {
-  handleRegister: handleRegister
+  handleRegister
 };

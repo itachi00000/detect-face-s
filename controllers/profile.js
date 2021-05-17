@@ -1,5 +1,5 @@
 //
-const handleProfile = (req, res, db) => {
+const handleProfile = (req, res) => {
   const user = req.profile;
 
   return res.json(user);
