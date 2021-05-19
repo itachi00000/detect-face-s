@@ -8,11 +8,15 @@ const dotenv = require('dotenv');
 
 const db = require('./config');
 
+// route
+const robotsRoute = require('./routes/robots.route');
+
 // controllers
 const register = require('./controllers/register');
 const signin = require('./controllers/signin');
 const profile = require('./controllers/profile');
 const image = require('./controllers/image');
+
 // auth
 const { isLoggedIn, isAuth } = require('./auth');
 
@@ -67,6 +71,8 @@ app.post('/imageurl', isLoggedIn, (req, res) => {
 app.put('/image', isLoggedIn, (req, res) => {
   image.handleImage(req, res, db);
 });
+
+app.use('/robots', robotsRoute);
 
 // params
 app.param('id', (req, res, next, id) => {
