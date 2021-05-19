@@ -10,6 +10,43 @@ const getRobots = async (req, res, next) => {
   }
 };
 
+const addRobot = async (req, res, next) => {
+  try {
+    const { name, username, email } = req.body;
+
+    const robot = await knex
+      .insert({
+        name,
+        username,
+        email
+      })
+      .into('login')
+      .returning('*'); // no return?, let front-end
+
+    return res.json(robot);
+  } catch (error) {
+    return res.status(404).json(error);
+  }
+};
+
+const updateRobot = async (req, res, next) => {
+  try {
+    const { id } = req.robot;
+    const { name, username, email } = req.body;
+
+    const robot = await knex
+      .where({ id })
+      .from('robots')
+      .select('*')
+      .update({ name, username, email })
+      .returning('*'); // no return?, let front-end
+
+    return res.json(robot);
+  } catch (error) {
+    return res.status(404).json(error);
+  }
+};
+
 const getRobot = async (req, res, next) => {
   try {
     const { robot } = req;
@@ -38,5 +75,7 @@ const robotById = async (req, res, next, robotId) => {
 module.exports = {
   getRobots,
   getRobot,
+  addRobot,
+  updateRobot,
   robotById
 };
