@@ -7,6 +7,7 @@ dotenv.config({ path: './.env.dev.local' });
 // const connectionString = `postgresql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_DATABASE}`;
 // connection: {connectionString : connectionString}
 
+// this will make cross-env useless
 // from knex site???
 const knexConfig = {
   development: {
@@ -45,7 +46,7 @@ const knex = require('knex')(knexConfig[process.env.NODE_ENV || 'development']);
 knex
   .raw('SELECT VERSION()')
   .then(() => {
-    console.log('Posgres-DB is connected');
+    console.log('<< Posgres-DB is connected');
   })
   .catch((err) => {
     console.log(err);

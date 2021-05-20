@@ -90,7 +90,7 @@ app.use('*', (req, res, next) => {
 // listen to localhost:3000
 app.listen(Port, (err) => {
   if (err) throw err;
-  console.log(`<< Smart-Brain-App ExpServer is running at port: ${Port}`);
+  console.log(`<< Smart-Brain-App ExpServer (${process.env.NODE_ENV || 'no-env'}), at http://localhost:${Port}/`);
 });
 
 /*
